@@ -15,17 +15,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
-@WebServlet(urlPatterns = "/sql")
-public class SqlServlet extends HttpServlet {
+@WebServlet(urlPatterns = "/stats")
+public class StatsServlet extends HttpServlet {
 
     private Context context;
     private DataSource dataSource;
+    private String instanceName;
+    private Integer instanceVersion;
 
     @Override
     public void init() throws ServletException {
         try {
             context = new InitialContext();
             dataSource = (DataSource) context.lookup("java:comp/env/jdbc/derby");
+            instanceName = (String) context.lookup("java:comp/env/instanceName");
+            instanceVersion = (Integer) context.lookup("java:comp/env/instanceVersion");
         } catch (NamingException e) {
             throw new ServletException(e);
         }
@@ -38,7 +42,10 @@ public class SqlServlet extends HttpServlet {
                 ResultSet rs = st.executeQuery("SELECT CURRENT_TIMESTAMP FROM SYSIBM.SYSDUMMY1")) {
             while (rs.next()) {
                 resp.getWriter().write(rs.getTimestamp(1).toString());
+                resp.getWriter().write("\n");
             }
+            resp.getWriter().write(String.format("InstanceName: %s%n",instanceName));
+            resp.getWriter().write(String.format("InstanceVersion: %d%n",instanceVersion));
         } catch (SQLException e) {
             throw new ServletException(e);
         }
