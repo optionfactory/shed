@@ -1,2 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Context path="/shed"/>
+<Context path="/shed">
+    <Environment name="instanceVersion" value="10" type="java.lang.Integer" override="false"/>
+    <Resource name="jdbc/derby"
+              type="javax.sql.DataSource"  auth="Container"
+              description="Derby database for JPetStoreApp"
+              maxActive="100" maxIdle="30" maxWait="10000"
+              username="" password="" 
+              driverClassName="org.apache.derby.jdbc.EmbeddedDriver"
+              url="jdbc:derby:memory:testDB;create=true"/>
+</Context>
