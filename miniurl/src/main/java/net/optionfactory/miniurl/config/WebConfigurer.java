@@ -36,7 +36,8 @@ public class WebConfigurer implements ServletContextListener {
         final JdbcMinifiedUrlRepository minifiedUrlRepo = new JdbcMinifiedUrlRepository(txManager);
         final DefaultMinifyService minifyService = new DefaultMinifyService(minifiedUrlRepo);
         final DefaultMinifyFacade facade = new DefaultMinifyFacade(blacklistService, minifyService, txManager);
-        final ServletRegistration.Dynamic dynReg = sce.getServletContext().addServlet(MinifyServlet.class.getSimpleName(), new MinifyServlet(facade));
+        final ServletRegistration.Dynamic dynReg = sce.getServletContext().addServlet(
+                MinifyServlet.class.getSimpleName(), new MinifyServlet(facade));
         dynReg.setLoadOnStartup(1);
         dynReg.addMapping("/api/*");
     }

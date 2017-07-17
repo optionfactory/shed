@@ -10,7 +10,7 @@ public interface MinifyFacade {
 
     List<BlacklistItemResponse> getBlacklistItems();
 
-    String minify(String targetUrl);
+    String minify(String targetUrl) throws BlacklistedException;
 
     Optional<String> resolve(String handle);
 
@@ -24,6 +24,13 @@ public interface MinifyFacade {
             this.since = since;
         }
 
+    }
+    
+    public static class BlacklistedException extends RuntimeException {
+
+        public BlacklistedException(String message) {
+            super(message);
+        }
     }
 
 }

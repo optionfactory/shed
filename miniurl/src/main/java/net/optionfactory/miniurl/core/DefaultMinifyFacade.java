@@ -53,11 +53,4 @@ public class DefaultMinifyFacade implements MinifyFacade {
         });
     }
 
-    public static class BlacklistedException extends RuntimeException {
-
-        public BlacklistedException(String message) {
-            super(message);
-        }
-    }
-
 }
