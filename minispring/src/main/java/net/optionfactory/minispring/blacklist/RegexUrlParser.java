@@ -1,4 +1,4 @@
-package net.optionfactory.miniurl.blacklist;
+package net.optionfactory.minispring.blacklist;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
