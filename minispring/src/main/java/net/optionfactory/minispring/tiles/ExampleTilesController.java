@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class ExampleTilesController {
 
-     @Value("${app.name}") String appName;
+    @Value("${app.name}") String appName;
     
     @RequestMapping("example")
     public String homePage(ModelMap model, @Value("${app.version}") String appVersion) {

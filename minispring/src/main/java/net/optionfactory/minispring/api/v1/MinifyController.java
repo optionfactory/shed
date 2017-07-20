@@ -32,14 +32,32 @@ public class MinifyController {
 
     @Autowired
     public MinifyFacade facade;
-    
+
+//    public MinifyController(MinifyFacade facade) {
+//        this.facade = facade;
+//    }
+
     // @Valid annotations processed thanks to MethodValidationPostProcessor for simple types
     // @Valid on Request DTOs is built-in
     @RequestMapping(path = "blacklist", method = RequestMethod.POST)
     @ResponseBody
-    public void addToBlacklist(@RequestParam @Valid @NotNull @NotEmpty @Length(min = 5, max = 255) @Pattern(regexp = "[a-zA-Z0-9\\.]+") String domain) {
+    public void addToBlacklist(@RequestParam("domain") @Valid @NotNull @NotEmpty @Length(min = 5, max = 255) 
+        @Pattern(regexp = "[a-zA-Z0-9\\.]+") String domain) {
         facade.blacklist(domain);
     }
+    
+//    public static class BlacklistRequest {
+//        @NotNull
+//        public String domain;
+//        public int duration;
+//       
+//    }
+//    
+//    @RequestMapping(path = "blacklist", method = RequestMethod.POST)
+//    @ResponseBody
+//    public void addToBlacklist(@RequestBody BlacklistRequest req) {
+//        facade.blacklist(req.domain);
+//    }
 
     @RequestMapping(path = "minify", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
@@ -69,7 +87,6 @@ public class MinifyController {
             throw new MappingNotFoundException();
         }
         return new RedirectView(target.get());
-
     }
 
     @ExceptionHandler(value = {MappingNotFoundException.class})

@@ -14,6 +14,7 @@ import net.optionfactory.minispring.minify.HibernateMinifiedUrlRepository;
 import net.optionfactory.minispring.minify.MinifiedUrlRepository;
 import net.optionfactory.minispring.minify.MinifyService;
 import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.annotation.Bean;
@@ -44,15 +45,30 @@ public class CoreConfig {
     public UrlParser jreUrlParser() {
         return new JreUrlParser();
     }
-
-    @Bean
-    public BlacklistRepository blacklistRepository(SessionFactory hibernate) {
-        return new HibernateBlacklistRepository(hibernate);
-    }
+    
+//    public UrlParser urlParser(
+//            @Value("${url.parser.type}") String parserType
+//    ) {
+//        if ("jre".equals(parserType)) {
+//            return new JreUrlParser();
+//        }
+//        RegexUrlParser regexUrlParser = new RegexUrlParser();
+//        regexUrlParser.init();
+//        return regexUrlParser;
+//    }
+    
+//    public BlacklistService anotherBlacklistService(BlacklistRepository blacklistRepository) {
+//        return new DefaultBlacklistService(blacklistRepository, new JreUrlParser());
+//    }
 
     @Bean
     public BlacklistService blacklistService(BlacklistRepository blacklistRepository, UrlParser urlParser) {
         return new DefaultBlacklistService(blacklistRepository, urlParser);
+    }
+    
+    @Bean
+    public BlacklistRepository blacklistRepository(SessionFactory hibernate) {
+        return new HibernateBlacklistRepository(hibernate);
     }
 
     @Bean
