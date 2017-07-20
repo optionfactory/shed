@@ -11,14 +11,21 @@ public class BlackListItem {
 
     @Id
     @NotNull
-    @Length(min=5, max=255)
+    @Length(min = 5, max = 255)
     public String domain;
+
+    public String reason;
+
     @NotNull
     public Instant since;
 
-    public BlackListItem(String domain, Instant since) {
+    public BlackListItem(String domain, String reason, Instant since) {
         this.domain = domain;
+        this.reason = reason;
         this.since = since;
+    }
+
+    public BlackListItem() {
     }
 
 }

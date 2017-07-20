@@ -14,9 +14,14 @@ public class DefaultBlacklistService implements BlacklistService {
     }
 
     @Override
-    public void blacklist(String domain) {
+    public void blacklist(String domain, String reason) {
         // TODO: authorization check
-        blacklist.add(new BlackListItem(domain, Instant.now()));
+        blacklist.add(new BlackListItem(domain, reason, Instant.now()));
+    }
+
+    @Override
+    public void remove(String domain) {
+        blacklist.find(domain).ifPresent(blacklist::remove);
     }
 
     @Override

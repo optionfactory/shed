@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 
 public class RegexUrlParser implements UrlParser {
 
-    private static final String urlPatternString = "(http(?:s)?)://(.+)(?:/.+)?";
+    private static final String urlPatternString = "(http(?:s)?)://([^/]+)(?:/.+)?";
     private Pattern urlPattern;
 
     @Override

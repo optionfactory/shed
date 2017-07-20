@@ -1,15 +1,120 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Home page</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>MiniSpring: Spring-based URL minifier</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+        <!-- Bootstrap -->
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+          <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+          <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+        <link rel="stylesheet" href="index.css">
     </head>
     <body>
-        <h1>Miniurl - URL minifier</h1>
-        <ul>
-            <li><a href="api/v1/blacklist">list blacklist items</a></li>
-            <li><form action="api/v1/blacklist" method="POST"><input type="text" name="domain"><button type="submit">Add to blacklist</button></form></li>
-            <li><form action="api/v1/minify" method="POST"><input type="text" name="url"><button type="submit">Minify URL</button></form></li>
-        </ul>
+        <!-- Fixed navbar -->
+        <nav class="navbar navbar-default navbar-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">Miniurl</a>
+                </div>
+                <div id="navbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a href="#">Home</a></li>
+                        <li><a href="#minify-section">Minify</a></li>
+                        <li><a href="#blacklist-section">Blacklist</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="container">
+            <section id="minify-section">
+                <h2>Minify</h2>
+                <div class="row">
+                    <div id="minify-alert" class="alert alert-warning hidden" role="alert">
+                        Error from server: <span class="alert-msg"></span>
+                    </div>
+                    <div class="col-sm-6">
+                        <form action="api/v1/minify" method="POST">
+                            <div class="form-group">
+                                <label for="url-input">Url:</label>
+                                <input id="url-input" type="text" name="url" class="form-control" placeholder="http://optionfactory.net/blog">
+                            </div>
+                            <div class="form-group">
+                                <button id="do-minify" class="btn btn-primary" type="button">Minify URL</button>
+                            </div>
+                            <div id="minified" class="alert alert-success hidden"></div> 
+                        </form>
+                    </div>
+                </div>
+            </section>
+            <section id="blacklist-section">
+                <h2>Blacklist</h2>
+                <div class="row">
+                    <div id="blacklist-alert" class="alert alert-warning hidden" role="alert">
+                        Error from server: <span class="alert-msg"></span>
+                    </div>
+                    <table class="table table-striped" id="blacklist">
+                        <thead>
+                            <tr>
+                                <th>Domain</th>
+                                <th>Reason</th>
+                                <th>Since</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <script type="html-template" id="blacklist-row-template">
+                            <tr>
+                            <td>Domain</td>
+                            <td>Reason</td>
+                            <td>Since</td>
+                            <td><button type="button" class="btn btn-danger btn-xs">Delete</button></td>
+                            </tr>
+                        </script>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <form action="api/v1/blacklist" method="POST">
+                            <div class="form-group">
+                                <label for="domain-input">Domain:</label>
+                                <input id="domain-input" type="text" name="domain" class="form-control" placeholder="franzoni.eu">
+                            </div>
+                            <div class="form-group">
+                                <label for="reason-input">Reason:</label>
+                                <input id="reason-input" type="text" name="reason" class="form-control" placeholder="Inappropriate content">
+                            </div>
+                            <div class="form-group">
+                                <button id="blacklist-add" class="btn btn-primary" type="button">Add to blacklist</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.js"></script>
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        <script src="index.js"></script>
+        <script>
+minispring.init();
+        </script>
     </body>
 </html>

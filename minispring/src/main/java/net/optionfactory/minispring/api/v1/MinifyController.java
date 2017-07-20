@@ -7,13 +7,13 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import net.optionfactory.minispring.api.MappingNotFoundException;
-import net.optionfactory.minispring.core.DefaultMinifyFacade;
 import net.optionfactory.minispring.core.MinifyFacade;
 import static net.optionfactory.minispring.minify.MinifyService.MINIFIED_URL_PREFIX;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,28 +36,44 @@ public class MinifyController {
 //    public MinifyController(MinifyFacade facade) {
 //        this.facade = facade;
 //    }
-
     // @Valid annotations processed thanks to MethodValidationPostProcessor for simple types
     // @Valid on Request DTOs is built-in
-    @RequestMapping(path = "blacklist", method = RequestMethod.POST)
+    @RequestMapping(path = "blacklist", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
-    public void addToBlacklist(@RequestParam("domain") @Valid @NotNull @NotEmpty @Length(min = 5, max = 255) 
-        @Pattern(regexp = "[a-zA-Z0-9\\.]+") String domain) {
-        facade.blacklist(domain);
+    public void addToBlacklist(
+            @RequestParam("domain") @Valid @NotNull @NotEmpty @Length(min = 5, max = 255)
+            @Pattern(regexp = "[a-zA-Z0-9\\.]+") String domain,
+            @RequestParam("reason") @Valid @Length(min = 0, max = 255) String reason) {
+        facade.blacklist(domain, reason);
     }
-    
-//    public static class BlacklistRequest {
-//        @NotNull
-//        public String domain;
-//        public int duration;
-//       
-//    }
-//    
-//    @RequestMapping(path = "blacklist", method = RequestMethod.POST)
-//    @ResponseBody
-//    public void addToBlacklist(@RequestBody BlacklistRequest req) {
-//        facade.blacklist(req.domain);
-//    }
+
+    @RequestMapping(path = "blacklist", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseBody
+    public void removeFromBlacklist(@RequestParam("domain") @Valid @NotNull String domain) {
+        facade.removeFromBlacklist(domain);
+    }
+
+    public static class BlacklistRequest {
+
+        @Valid
+        @NotEmpty
+        @Length(min = 5, max = 255)
+        @Pattern(regexp = "[a-zA-Z0-9\\.]+")
+        public String domain;
+        @Valid
+        @Length(min = 0, max = 255)
+        public String reason;
+
+    }
+
+    @RequestMapping(path = "blacklist", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseBody
+    public void addToBlacklist(@RequestBody BlacklistRequest req) {
+        facade.blacklist(req.domain, req.reason);
+    }
 
     @RequestMapping(path = "minify", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
@@ -67,11 +83,25 @@ public class MinifyController {
         return String.format("%s://%s:%s%s%s/v1/%s", req.getScheme(), req.getServerName(), req.getServerPort(), req.getContextPath(), req.getServletPath(), handle);
     }
 
-    @ExceptionHandler(value = {MinifyFacade.BlacklistedException.class})
+    @ExceptionHandler(value = {Exception.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public String handleBlacklistedException(DefaultMinifyFacade.BlacklistedException ex) {
-        return "Domain blacklisted";
+    public MyErrors handleInvalidRequest(Exception ex) {
+        final MyErrors errors = new MyErrors();
+        errors.message = ex.getMessage();
+        return errors;
+    }
+
+    public static class MyFieldError {
+
+        public String fieldName;
+        public String message;
+    }
+
+    public static class MyErrors {
+
+        public String message;
+        public List<MyFieldError> fieldErrors;
     }
 
     @RequestMapping(path = "blacklist", method = RequestMethod.GET)

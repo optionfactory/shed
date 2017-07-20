@@ -19,8 +19,14 @@ public class DefaultMinifyFacade implements MinifyFacade {
 
     @Override
     @Transactional
-    public void blacklist(String domain) {
-        blacklistService.blacklist(domain);
+    public void blacklist(String domain, String reason) {
+        blacklistService.blacklist(domain, reason);
+    }
+
+    @Override
+    @Transactional
+    public void removeFromBlacklist(String domain) {
+        blacklistService.remove(domain);
     }
 
     @Override
@@ -28,7 +34,7 @@ public class DefaultMinifyFacade implements MinifyFacade {
     public List<BlacklistItemResponse> getBlacklistItems() {
         return blacklistService.getBlacklistItems()
                 .stream()
-                .map(item -> new BlacklistItemResponse(item.domain, item.since))
+                .map(item -> new BlacklistItemResponse(item.domain, item.reason, item.since))
                 .collect(Collectors.toList());
     }
 
