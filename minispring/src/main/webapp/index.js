@@ -44,9 +44,6 @@ var minispring = function () {
                         });
                 tbody.append(row);
             });
-            $("#blacklist-alert").addClass("hidden")
-            $("<h1>").text(json.title).appendTo("body");
-            $("<div class=\"content\">").html(json.html).appendTo("body");
             clearError("blacklist-alert");
         }).fail(function (xhr, status, errorMsg) {
             alertError("blacklist-alert", errorMsg + ": " + xhr.responseJSON.message);

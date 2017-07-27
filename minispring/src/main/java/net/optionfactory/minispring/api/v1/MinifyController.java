@@ -2,6 +2,7 @@ package net.optionfactory.minispring.api.v1;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -15,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -55,9 +58,9 @@ public class MinifyController {
         facade.removeFromBlacklist(domain);
     }
 
+    
     public static class BlacklistRequest {
 
-        @Valid
         @NotEmpty
         @Length(min = 5, max = 255)
         @Pattern(regexp = "[a-zA-Z0-9\\.]+")
@@ -71,7 +74,7 @@ public class MinifyController {
     @RequestMapping(path = "blacklist", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
-    public void addToBlacklist(@RequestBody BlacklistRequest req) {
+    public void addToBlacklist(@Valid @RequestBody BlacklistRequest req) {
         facade.blacklist(req.domain, req.reason);
     }
 
@@ -82,7 +85,21 @@ public class MinifyController {
         final String handle = facade.minify(url);
         return String.format("%s://%s:%s%s%s/v1/%s", req.getScheme(), req.getServerName(), req.getServerPort(), req.getContextPath(), req.getServletPath(), handle);
     }
-
+    
+    @ExceptionHandler(value = {MethodArgumentNotValidException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public MyErrors handleInvalidRequest(MethodArgumentNotValidException ex) {
+        final MyErrors errors = new MyErrors();
+        final String globalErrors = String.join(". ", ex.getBindingResult().getGlobalErrors().stream().map(e -> e.getDefaultMessage()).collect(Collectors.toList()));
+        errors.message = "Validation failed. " + globalErrors;
+        errors.fieldErrors = ex.getBindingResult().getFieldErrors()
+                .stream()
+                .map(fe -> new MyFieldError(fe.getField(), fe.getDefaultMessage()))
+                .collect(Collectors.toList());
+        return errors;
+    }
+    
     @ExceptionHandler(value = {Exception.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
@@ -96,6 +113,13 @@ public class MinifyController {
 
         public String fieldName;
         public String message;
+
+        public MyFieldError(String fieldName, String message) {
+            this.fieldName = fieldName;
+            this.message = message;
+        }
+        
+        
     }
 
     public static class MyErrors {
