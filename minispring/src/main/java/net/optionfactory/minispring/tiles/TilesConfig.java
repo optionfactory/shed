@@ -22,8 +22,6 @@ public class TilesConfig extends WebMvcConfigurerAdapter {
         return tilesConfigurer;
     }
 
-    
-    
     @Override
     public void configureViewResolvers(ViewResolverRegistry registry) {
         registry.tiles();

@@ -1,10 +1,10 @@
-package net.optionfactory.minispring.core;
+package net.optionfactory.minispring.minify;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import net.optionfactory.minispring.blacklist.BlacklistService;
-import net.optionfactory.minispring.minify.MinifyService;
+import net.optionfactory.minispring.blacklist.BlacklistedException;
 import org.springframework.transaction.annotation.Transactional;
 
 public class DefaultMinifyFacade implements MinifyFacade {
@@ -15,27 +15,6 @@ public class DefaultMinifyFacade implements MinifyFacade {
     public DefaultMinifyFacade(BlacklistService blacklistService, MinifyService minifyService) {
         this.blacklistService = blacklistService;
         this.minifyService = minifyService;
-    }
-
-    @Override
-    @Transactional
-    public void blacklist(String domain, String reason) {
-        blacklistService.blacklist(domain, reason);
-    }
-
-    @Override
-    @Transactional
-    public void removeFromBlacklist(String domain) {
-        blacklistService.remove(domain);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<BlacklistItemResponse> getBlacklistItems() {
-        return blacklistService.getBlacklistItems()
-                .stream()
-                .map(item -> new BlacklistItemResponse(item.domain, item.reason, item.since))
-                .collect(Collectors.toList());
     }
 
     @Override

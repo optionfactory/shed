@@ -1,18 +1,13 @@
-package net.optionfactory.minispring.core;
+package net.optionfactory.minispring.blacklist;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 
-public interface MinifyFacade {
+public interface BlacklistFacade {
 
     void blacklist(String domain, String reason);
 
     List<BlacklistItemResponse> getBlacklistItems();
-
-    String minify(String targetUrl) throws BlacklistedException;
-
-    Optional<String> resolve(String handle);
 
     public void removeFromBlacklist(String domain);
 
@@ -29,12 +24,4 @@ public interface MinifyFacade {
         }
 
     }
-
-    public static class BlacklistedException extends RuntimeException {
-
-        public BlacklistedException(String message) {
-            super(message);
-        }
-    }
-
 }

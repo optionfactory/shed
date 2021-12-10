@@ -1,4 +1,4 @@
-package net.optionfactory.minispring.api;
+package net.optionfactory.minispring.minify.api.v1;
 
 
 public class MappingNotFoundException extends RuntimeException {

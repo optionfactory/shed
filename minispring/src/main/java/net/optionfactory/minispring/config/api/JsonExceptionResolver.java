@@ -1,4 +1,4 @@
-package net.optionfactory.minispring.api;
+package net.optionfactory.minispring.config.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
