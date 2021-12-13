@@ -1,8 +1,6 @@
 package net.optionfactory.minispring.minify;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import net.optionfactory.minispring.blacklist.BlacklistService;
 import net.optionfactory.minispring.blacklist.BlacklistedException;
 import org.springframework.transaction.annotation.Transactional;

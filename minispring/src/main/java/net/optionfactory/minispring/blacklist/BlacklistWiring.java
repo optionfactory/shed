@@ -1,8 +1,5 @@
 package net.optionfactory.minispring.blacklist;
 
-import net.optionfactory.minispring.minify.DefaultMinifyFacade;
-import net.optionfactory.minispring.minify.MinifyFacade;
-import net.optionfactory.minispring.minify.MinifyService;
 import org.hibernate.SessionFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -50,6 +47,6 @@ public class BlacklistWiring {
     }
     @Bean
     public BlacklistFacade blacklistFacade(BlacklistService blacklistService) {
-        return new BlacklistFacadeTransactionalImpl(blacklistService);
+        return new TransactionalBlacklistFacade(blacklistService);
     }
 }

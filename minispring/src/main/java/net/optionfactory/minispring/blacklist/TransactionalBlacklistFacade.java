@@ -1,17 +1,16 @@
 package net.optionfactory.minispring.blacklist;
 
-import net.optionfactory.minispring.minify.MinifyService;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Transactional
-public class BlacklistFacadeTransactionalImpl implements BlacklistFacade {
+public class TransactionalBlacklistFacade implements BlacklistFacade {
 
     private final BlacklistService blacklistService;
 
-    public BlacklistFacadeTransactionalImpl(BlacklistService blacklistService) {
+    public TransactionalBlacklistFacade(BlacklistService blacklistService) {
         this.blacklistService = blacklistService;
     }
 
