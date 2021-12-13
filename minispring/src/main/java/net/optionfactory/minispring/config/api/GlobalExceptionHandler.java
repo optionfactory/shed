@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,6 +41,20 @@ public class GlobalExceptionHandler {
 
         public String message;
         public List<MyFieldError> fieldErrors;
+    }
+
+    @ExceptionHandler(value = {ConstraintViolationException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public MyErrors handleInvalidRequest(ConstraintViolationException ex) {
+        final MyErrors errors = new MyErrors();
+        final String globalErrors = ex.getConstraintViolations().stream().map(ConstraintViolation::getMessage).collect(Collectors.joining(". "));
+        errors.message = "Validation failed. " + globalErrors;
+        errors.fieldErrors = ex.getConstraintViolations()
+                .stream()
+                .map(fe -> new MyFieldError(fe.getPropertyPath().toString(), fe.getMessage()))
+                .collect(Collectors.toList());
+        return errors;
     }
 
     @ExceptionHandler(value = {MethodArgumentNotValidException.class})
