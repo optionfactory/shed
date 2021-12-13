@@ -23,22 +23,4 @@ public class BlacklistWiring {
         return new BlacklistFacade(clock, blacklist);
     }
 
-    @Bean
-    @Primary
-    public MinifyService minifier(MinifyService minifyService, BlacklistRepository blacklist) {
-        return new MinifyService() {
-            @Override
-            public String minify(URL target) {
-                if (blacklist.containsItemFor(target)) {
-                    throw new BlacklistedException("Domain is blacklisted");
-                }
-                return minifyService.minify(target);
-            }
-
-            @Override
-            public Optional<URL> resolve(String handle) {
-                return minifyService.resolve(handle);
-            }
-        };
-    }
 }
