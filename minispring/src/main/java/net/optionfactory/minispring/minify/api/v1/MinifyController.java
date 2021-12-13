@@ -9,6 +9,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import net.optionfactory.minispring.minify.MinifyFacade;
+
 import static net.optionfactory.minispring.minify.MinifyService.MINIFIED_URL_PREFIX;
 
 import org.hibernate.validator.constraints.NotEmpty;
@@ -37,19 +38,11 @@ public class MinifyController {
     @RequestMapping(path = "minify", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public String minify(@RequestParam @Valid @NotNull URI url, HttpServletRequest req) {
-        if (!url.getScheme().startsWith("http")) {
-            throw new IllegalArgumentException("Only http url allowed");
-        }
-        final String handle;
-        try {
-            handle = facade.minify(url.toURL());
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
+    public String minify(@RequestParam @Valid @NotNull @HttpUri URI url, HttpServletRequest req) throws MalformedURLException {
+        final String handle = facade.minify(url.toURL());
         return String.format("%s://%s:%s%s%s/v1/%s", req.getScheme(), req.getServerName(), req.getServerPort(), req.getContextPath(), req.getServletPath(), handle);
     }
-    
+
     @RequestMapping(path = MINIFIED_URL_PREFIX + "{handleSuffix}", method = RequestMethod.GET)
     public View resolve(@PathVariable(required = true, name = "handleSuffix") String handleSuffix) {
         final Optional<URL> target = facade.resolve(MINIFIED_URL_PREFIX + handleSuffix);
