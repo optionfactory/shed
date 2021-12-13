@@ -1,18 +1,39 @@
 package net.optionfactory.minispring.blacklist;
 
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Clock;
 import java.time.Instant;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public interface BlacklistFacade {
+@Transactional
+public class BlacklistFacade {
+    private final Clock clock;
+    private final BlacklistRepository blacklist;
 
-    void blacklist(String domain, String reason);
+    public BlacklistFacade(Clock clock, BlacklistRepository blacklist) {
+        this.clock = clock;
+        this.blacklist = blacklist;
+    }
 
-    List<BlacklistItemResponse> getBlacklistItems();
+    public void blacklist(String domain, String reason) {
+        blacklist.add(new BlackListItem(domain, reason, clock.instant()));
+    }
 
-    public void removeFromBlacklist(String domain);
+    public void removeFromBlacklist(String domain) {
+        blacklist.find(domain).ifPresent(blacklist::remove);
+    }
+
+    @Transactional(readOnly = true)
+    public List<BlacklistItemResponse> getBlacklistItems() {
+        return blacklist.findAll()
+                .stream()
+                .map(item -> new BlacklistItemResponse(item.domain, item.reason, item.since))
+                .collect(Collectors.toList());
+    }
 
     public static class BlacklistItemResponse {
-
         public final String domain;
         public final String reason;
         public final Instant since;
@@ -22,6 +43,6 @@ public interface BlacklistFacade {
             this.reason = reason;
             this.since = since;
         }
-
     }
+
 }

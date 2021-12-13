@@ -1,13 +1,9 @@
 package net.optionfactory.minispring.minify;
 
-import net.optionfactory.minispring.blacklist.BlacklistService;
+import net.optionfactory.minispring.blacklist.BlacklistRepository;
 import org.hibernate.SessionFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.function.Supplier;
 
 @Configuration
 public class MinifyWiring {
@@ -23,24 +19,8 @@ public class MinifyWiring {
     }
 
     @Bean
-    public MinifyFacade minifyFacade(BlacklistService blacklistService, MinifyService minifyService) {
-        return new DefaultMinifyFacade(blacklistService, minifyService);
+    public MinifyFacade minifyFacade(MinifyService minifyService, BlacklistRepository blacklist) {
+        return new MinifyFacade(minifyService, blacklist);
     }
 
-    public static class MessageDigestSupplier implements Supplier<MessageDigest> {
-        private final String algo;
-
-        public MessageDigestSupplier(String algo) {
-            this.algo = algo;
-        }
-
-        @Override
-        public MessageDigest get() {
-            try {
-                return MessageDigest.getInstance(algo);
-            } catch (NoSuchAlgorithmException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
 }

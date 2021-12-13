@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 
+import java.time.Clock;
+
 
 @Configuration
 @PropertySource("classpath:/net/optionfactory/miniurl/minispring.properties")
@@ -22,5 +24,8 @@ public class CoreConfig {
         return new PreferencesPlaceholderConfigurer();
     }
 
-
+    @Bean
+    public Clock clock() {
+        return Clock.systemUTC();
+    }
 }

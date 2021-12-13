@@ -5,48 +5,18 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
+import java.time.Clock;
+
 @Configuration
 public class BlacklistWiring {
-
-    @Bean
-    @Primary
-    public UrlParser regexUrlParser() {
-        final RegexUrlParser regexUrlParser = new RegexUrlParser();
-        regexUrlParser.init();
-        return regexUrlParser;
-    }
-
-    @Bean
-    public UrlParser jreUrlParser() {
-        return new JreUrlParser();
-    }
-
-//    public UrlParser urlParser(
-//            @Value("${url.parser.type}") String parserType
-//    ) {
-//        if ("jre".equals(parserType)) {
-//            return new JreUrlParser();
-//        }
-//        RegexUrlParser regexUrlParser = new RegexUrlParser();
-//        regexUrlParser.init();
-//        return regexUrlParser;
-//    }
-
-//    public BlacklistService anotherBlacklistService(BlacklistRepository blacklistRepository) {
-//        return new DefaultBlacklistService(blacklistRepository, new JreUrlParser());
-//    }
-
-    @Bean
-    public BlacklistService blacklistService(BlacklistRepository blacklistRepository, UrlParser urlParser) {
-        return new DefaultBlacklistService(blacklistRepository, urlParser);
-    }
 
     @Bean
     public BlacklistRepository blacklistRepository(SessionFactory hibernate) {
         return new HibernateBlacklistRepository(hibernate);
     }
+
     @Bean
-    public BlacklistFacade blacklistFacade(BlacklistService blacklistService) {
-        return new TransactionalBlacklistFacade(blacklistService);
+    public BlacklistFacade blacklistFacade(Clock clock, BlacklistRepository blacklist) {
+        return new BlacklistFacade(clock, blacklist);
     }
 }

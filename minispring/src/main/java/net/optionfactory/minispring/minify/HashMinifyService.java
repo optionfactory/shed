@@ -2,6 +2,8 @@ package net.optionfactory.minispring.minify;
 
 import org.apache.commons.codec.binary.Hex;
 
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Optional;
@@ -18,7 +20,7 @@ public class HashMinifyService implements MinifyService {
     }
 
     @Override
-    public String minify(String target) {
+    public String minify(URL target) {
         // TODO: check authorization
         final String handle = generateHandle(target);
         repo.add(MinifiedUrl.of(handle, target));
@@ -26,12 +28,17 @@ public class HashMinifyService implements MinifyService {
     }
 
     @Override
-    public Optional<String> resolve(String handle) {
+    public Optional<URL> resolve(String handle) {
         return repo.find(handle).map(mu -> mu.target);
     }
 
-    private String generateHandle(String target) {
-        final byte[] digest = messageDigestSupplier.get().digest(target.getBytes(StandardCharsets.UTF_8));
-        return String.format("%s%s", MINIFIED_URL_PREFIX, Hex.encodeHexString(digest));
+    private String generateHandle(URL target) {
+        try {
+            final byte[] digest = messageDigestSupplier.get().digest(target.toURI().toString().getBytes(StandardCharsets.UTF_8));
+            return String.format("%s%s", MINIFIED_URL_PREFIX, Hex.encodeHexString(digest));
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }

@@ -1,5 +1,6 @@
 package net.optionfactory.minispring.blacklist;
 
+import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.criteria.CriteriaQuery;
@@ -21,6 +22,11 @@ public class HibernateBlacklistRepository implements BlacklistRepository {
     @Override
     public Optional<BlackListItem> find(String domain) {
         return Optional.ofNullable(hibernate.getCurrentSession().get(BlackListItem.class, domain));
+    }
+
+    @Override
+    public boolean containsItemFor(URL url) {
+        return this.find(url.getHost()).isPresent();
     }
 
     @Override

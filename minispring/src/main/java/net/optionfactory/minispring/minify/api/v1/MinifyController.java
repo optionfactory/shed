@@ -1,14 +1,11 @@
 package net.optionfactory.minispring.minify.api.v1;
 
+import java.net.URL;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import javax.validation.constraints.Pattern;
 
 import net.optionfactory.minispring.minify.MinifyFacade;
 import static net.optionfactory.minispring.minify.MinifyService.MINIFIED_URL_PREFIX;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -32,18 +29,18 @@ public class MinifyController {
     @RequestMapping(path = "minify", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public String minify(@RequestParam @Valid @NotEmpty @Length(min = 10, max = 4000) @Pattern(regexp = "http(s)?://.+") String url, HttpServletRequest req) {
+    public String minify(@RequestParam URL url, HttpServletRequest req) {
         final String handle = facade.minify(url);
         return String.format("%s://%s:%s%s%s/v1/%s", req.getScheme(), req.getServerName(), req.getServerPort(), req.getContextPath(), req.getServletPath(), handle);
     }
     
     @RequestMapping(path = MINIFIED_URL_PREFIX + "{handleSuffix}", method = RequestMethod.GET)
     public View resolve(@PathVariable(required = true, name = "handleSuffix") String handleSuffix) {
-        final Optional<String> target = facade.resolve(MINIFIED_URL_PREFIX + handleSuffix);
+        final Optional<URL> target = facade.resolve(MINIFIED_URL_PREFIX + handleSuffix);
         if (!target.isPresent()) {
             throw new MappingNotFoundException();
         }
-        return new RedirectView(target.get());
+        return new RedirectView(target.get().toString());
     }
 
     @ExceptionHandler(value = {MappingNotFoundException.class})
