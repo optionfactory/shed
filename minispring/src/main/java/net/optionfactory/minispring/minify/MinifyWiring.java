@@ -1,6 +1,5 @@
 package net.optionfactory.minispring.minify;
 
-import net.optionfactory.minispring.blacklist.BlacklistRepository;
 import org.hibernate.SessionFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,8 +18,8 @@ public class MinifyWiring {
     }
 
     @Bean
-    public MinifyFacade minifyFacade(MinifyService minifyService, BlacklistRepository blacklist) {
-        return new MinifyFacade(minifyService, blacklist);
+    public MinifyFacade minifyFacade(MinifyService minifyService) {
+        return new MinifyFacade(minifyService);
     }
 
 }
