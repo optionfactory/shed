@@ -1,11 +1,17 @@
 package net.optionfactory.minispring.minify.api.v1;
 
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import net.optionfactory.minispring.minify.MinifyFacade;
 import static net.optionfactory.minispring.minify.MinifyService.MINIFIED_URL_PREFIX;
+
+import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -31,8 +37,16 @@ public class MinifyController {
     @RequestMapping(path = "minify", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public String minify(@RequestParam URL url, HttpServletRequest req) {
-        final String handle = facade.minify(url);
+    public String minify(@RequestParam @Valid @NotNull URI url, HttpServletRequest req) {
+        if (!url.getScheme().startsWith("http")) {
+            throw new IllegalArgumentException("Only http url allowed");
+        }
+        final String handle;
+        try {
+            handle = facade.minify(url.toURL());
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
         return String.format("%s://%s:%s%s%s/v1/%s", req.getScheme(), req.getServerName(), req.getServerPort(), req.getContextPath(), req.getServletPath(), handle);
     }
     
