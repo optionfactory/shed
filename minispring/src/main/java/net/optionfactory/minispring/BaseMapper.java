@@ -1,6 +1,5 @@
 package net.optionfactory.minispring;
 
-import jdk.internal.joptsimple.internal.Strings;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 
@@ -22,11 +21,13 @@ public interface BaseMapper {
     default String dropEmptiesAndTrim(String original) {
         return dropEmptiesAndTrim(Optional.ofNullable(original));
     }
+
     default String dropEmptiesAndTrim(Optional<String> original) {
         return original
-                .filter(s -> !Strings.isNullOrEmpty(s))
-                .map(s->s.trim()).orElse(null);
+                .filter(s -> s != null && !s.isEmpty())
+                .map(s -> s.trim()).orElse(null);
     }
+
     default <T> Optional<T> box(T v) {
         return Optional.ofNullable(v);
     }

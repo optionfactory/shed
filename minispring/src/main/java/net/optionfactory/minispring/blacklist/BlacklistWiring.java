@@ -1,5 +1,6 @@
 package net.optionfactory.minispring.blacklist;
 
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import net.optionfactory.minispring.minify.UrlValidator;
 import org.hibernate.SessionFactory;
 import org.mapstruct.factory.Mappers;
@@ -18,8 +19,8 @@ public class BlacklistWiring {
     }
 
     @Bean
-    public BlacklistFacade blacklistFacade(Clock clock, BlacklistRepository blacklist, BlacklistMapper mapper) {
-        return new BlacklistFacade(clock, blacklist, mapper);
+    public BlacklistFacade blacklistFacade(Clock clock, BlacklistRepository blacklist, BlacklistMapper mapper, CsvMapper csvMapper) {
+        return new BlacklistFacade(clock, blacklist, mapper, csvMapper);
     }
 
     @Bean

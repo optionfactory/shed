@@ -24,7 +24,7 @@ public class HashMinifyService implements MinifyService {
 
     @Override
     public String minify(URL target) {
-        if (urlValidators.stream().anyMatch(e -> e.isValid(target))) {
+        if (urlValidators.stream().anyMatch(e -> !e.isValid(target))) {
             throw new UrlNotValidException("Url is not allowed");
         }
         // TODO: check authorization

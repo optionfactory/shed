@@ -1,6 +1,11 @@
 package net.optionfactory.minispring.config;
 
 import net.optionfactory.minispring.BaseMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import net.optionfactory.minispring.BaseMapper;
 import net.optionfactory.minispring.blacklist.BlacklistWiring;
 import net.optionfactory.minispring.minify.MinifyWiring;
 import org.mapstruct.factory.Mappers;
@@ -37,5 +42,14 @@ public class CoreConfig {
     public BaseMapper baseMapper() {
         return Mappers.getMapper(BaseMapper.class);
     }
+    @Bean
+    public CsvMapper csvMapper() {
+        final CsvMapper csvMapper = new CsvMapper();
+        csvMapper.registerModules(
+                new JavaTimeModule(),
+                new Jdk8Module());
+        csvMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        return csvMapper;
 
+    }
 }
