@@ -1,7 +1,9 @@
 package net.optionfactory.minispring.config;
 
+import net.optionfactory.minispring.BaseMapper;
 import net.optionfactory.minispring.blacklist.BlacklistWiring;
 import net.optionfactory.minispring.minify.MinifyWiring;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.annotation.Bean;
@@ -30,4 +32,10 @@ public class CoreConfig {
     public Clock clock() {
         return Clock.systemUTC();
     }
+
+    @Bean
+    public BaseMapper baseMapper() {
+        return Mappers.getMapper(BaseMapper.class);
+    }
+
 }

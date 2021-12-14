@@ -63,7 +63,7 @@ public class BlacklistController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
     public void addToBlacklist(@Valid @RequestBody BlacklistRequest req) {
-        facade.blacklist(req.domain, req.reason);
+        facade.blacklist(req);
     }
 
     @RequestMapping(path = "blacklist", method = RequestMethod.GET)

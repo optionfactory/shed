@@ -2,6 +2,7 @@ package net.optionfactory.minispring.blacklist;
 
 import net.optionfactory.minispring.minify.UrlValidator;
 import org.hibernate.SessionFactory;
+import org.mapstruct.factory.Mappers;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -17,8 +18,13 @@ public class BlacklistWiring {
     }
 
     @Bean
-    public BlacklistFacade blacklistFacade(Clock clock, BlacklistRepository blacklist) {
-        return new BlacklistFacade(clock, blacklist);
+    public BlacklistFacade blacklistFacade(Clock clock, BlacklistRepository blacklist, BlacklistMapper mapper) {
+        return new BlacklistFacade(clock, blacklist, mapper);
+    }
+
+    @Bean
+    public BlacklistMapper blacklistMapper() {
+        return Mappers.getMapper(BlacklistMapper.class);
     }
 
     @Bean
