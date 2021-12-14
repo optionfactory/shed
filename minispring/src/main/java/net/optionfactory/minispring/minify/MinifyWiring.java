@@ -4,6 +4,9 @@ import org.hibernate.SessionFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.net.URL;
+import java.util.List;
+
 @Configuration
 public class MinifyWiring {
 
@@ -13,8 +16,13 @@ public class MinifyWiring {
     }
 
     @Bean
-    public MinifyService minifyService(MinifiedUrlRepository minifiedUrlRepository) {
-        return new HashMinifyService(minifiedUrlRepository, new MessageDigestSupplier("SHA-256"));
+    public MinifyService minifyService(MinifiedUrlRepository minifiedUrlRepository, List<UrlValidator> urlValidators) {
+        return new HashMinifyService(minifiedUrlRepository, new MessageDigestSupplier("SHA-256"), urlValidators);
+    }
+
+    @Bean
+    public UrlValidator notLocalhost() {
+        return new NotLocalhostUrlValidator();
     }
 
     @Bean
@@ -22,4 +30,10 @@ public class MinifyWiring {
         return new MinifyFacade(minifyService);
     }
 
+    private static class NotLocalhostUrlValidator implements UrlValidator {
+        @Override
+        public boolean isValid(URL url) {
+            return !url.getHost().equals("localhost");
+        }
+    }
 }
