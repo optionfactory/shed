@@ -7,4 +7,5 @@
   <root level="info">
     <appender-ref ref="stdout"/>
   </root>
+  <logger name="org.hibernate.engine.jdbc.spi" level="ERROR" />
 </configuration>
